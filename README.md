@@ -2,8 +2,6 @@
 A modern, responsive web application that scans any Roblox player's public games to discover all their published gamepasses, displaying Robux prices with direct purchase and donation links.
 
 # [bloxpass](https://donaterblx.vercel.app/)
-![Roblox Gamepass Scanner](public/styles.css)
-
 
 ## ✨ Features
 
