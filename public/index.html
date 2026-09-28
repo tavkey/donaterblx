@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BloxPass Scanner - Find & Donate to Any Roblox Player</title>
+  <meta name="description" content="Type any Roblox username to scan all their public gamepasses, view prices, and donate directly on Roblox!">
+  <link rel="stylesheet" href="styles.css">
+  <!-- Inter font & Font Awesome Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-content">
+      <div class="brand">
+        <div class="brand-icon">
+          <i class="fa-solid fa-ticket"></i>
+        </div>
+        <span class="brand-title">BloxPass<span class="highlight">Scanner</span></span>
+      </div>
+      <div class="nav-links">
+        <a href="#how-it-works" class="nav-link"><i class="fa-solid fa-circle-info"></i> How it works</a>
+        <a href="https://www.roblox.com" target="_blank" rel="noopener" class="btn btn-secondary">
+          <i class="fa-solid fa-arrow-up-right-from-square"></i> Roblox
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container hero-container">
+      <div class="badge-pill">
+        <span class="pulse-dot"></span> 100% Free Gamepass & Donation Scanner
+      </div>
+      <h1 class="hero-title">Scan Any Player's <span class="gradient-text">Gamepasses</span></h1>
+      <p class="hero-subtitle">Enter a Roblox username to view all their created gamepasses, compare Robux prices, and click to donate directly!</p>
+
+      <!-- Search Box -->
+      <form id="search-form" class="search-box">
+        <div class="input-wrapper">
+          <i class="fa-solid fa-user search-icon"></i>
+          <input type="text" id="username-input" placeholder="Type Roblox Username (e.g. hazem)..." autocomplete="off" required />
+          <button type="button" id="clear-btn" class="clear-btn hidden" title="Clear">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <button type="submit" id="search-btn" class="btn btn-primary btn-search">
+          <i class="fa-solid fa-magnifying-glass"></i> Scan Passes
+        </button>
+      </form>
+
+      <!-- Preset Quick Search Pills -->
+      <div class="preset-pills">
+        <span class="pill-label">Try searching:</span>
+        <button type="button" class="preset-btn" data-username="hazem">hazem</button>
+        <button type="button" class="preset-btn" data-username="builderman">builderman</button>
+        <button type="button" class="preset-btn" data-username="vrtual">vrtual</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="container main-content">
+
+    <!-- Loading Skeleton -->
+    <div id="loading-state" class="loading-container hidden">
+      <div class="skeleton-profile-card">
+        <div class="skeleton avatar-skel"></div>
+        <div class="skel-text-wrap">
+          <div class="skeleton skel-title"></div>
+          <div class="skeleton skel-subtitle"></div>
+        </div>
+      </div>
+      <div class="skeleton-stats-grid">
+        <div class="skeleton skel-stat"></div>
+        <div class="skeleton skel-stat"></div>
+        <div class="skeleton skel-stat"></div>
+      </div>
+      <div class="grid-skeleton">
+        <div class="skeleton skel-card"></div>
+        <div class="skeleton skel-card"></div>
+        <div class="skeleton skel-card"></div>
+        <div class="skeleton skel-card"></div>
+      </div>
+    </div>
+
+    <!-- Error Alert Container -->
+    <div id="error-container" class="error-card hidden">
+      <div class="error-icon">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+      </div>
+      <div class="error-body">
+        <h3 id="error-title">User Not Found</h3>
+        <p id="error-message">Could not retrieve gamepasses for this player.</p>
+      </div>
+    </div>
+
+    <!-- User Profile Header & Stats (Hidden by default) -->
+    <section id="results-section" class="results-section hidden">
+      <div class="profile-header-card">
+        <div class="avatar-column">
+          <div class="avatar-ring">
+            <img id="user-avatar" src="" alt="User Avatar" class="user-avatar-img">
+          </div>
+        </div>
+        <div class="user-info-column">
+          <div class="name-badge-row">
+            <h2 id="user-display-name">Display Name</h2>
+            <span id="verified-badge" class="verified-icon hidden" title="Verified Roblox Account">
+              <i class="fa-solid fa-circle-check"></i>
+            </span>
+          </div>
+          <p id="user-handle" class="user-handle">@username</p>
+          <div class="user-actions">
+            <a id="roblox-profile-link" href="#" target="_blank" rel="noopener" class="btn btn-sm btn-outline">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Roblox Profile
+            </a>
+            <button id="copy-share-btn" class="btn btn-sm btn-outline">
+              <i class="fa-solid fa-share-nodes"></i> Share Results
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Counters -->
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-icon robux-icon-box">
+            <span class="robux-symbol">R$</span>
+          </div>
+          <div class="stat-meta">
+            <span class="stat-label">Total Robux Value</span>
+            <span id="stat-total-value" class="stat-value highlight-gold">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon passes-icon-box">
+            <i class="fa-solid fa-tags"></i>
+          </div>
+          <div class="stat-meta">
+            <span class="stat-label">For Sale Passes</span>
+            <span id="stat-for-sale" class="stat-value">0</span>
+          </div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-icon games-icon-box">
+            <i class="fa-solid fa-gamepad"></i>
+          </div>
+          <div class="stat-meta">
+            <span class="stat-label">Public Games Scanned</span>
+            <span id="stat-total-games" class="stat-value">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="toolbar">
+        <div class="toolbar-search">
+          <i class="fa-solid fa-filter filter-icon"></i>
+          <input type="text" id="filter-pass-input" placeholder="Search gamepasses by name..." />
+        </div>
+
+        <div class="toolbar-options">
+          <div class="select-wrapper">
+            <label for="sort-select"><i class="fa-solid fa-arrow-down-short-wide"></i> Sort:</label>
+            <select id="sort-select">
+              <option value="price-desc">Price: High to Low</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="name-asc">Name: A to Z</option>
+            </select>
+          </div>
+
+          <label class="toggle-switch">
+            <input type="checkbox" id="for-sale-only-checkbox" checked />
+            <span class="slider"></span>
+            <span class="toggle-label">Available Only</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Gamepasses Grid -->
+      <div id="passes-grid" class="passes-grid">
+        <!-- Rendered via app.js -->
+      </div>
+
+      <!-- Empty Passes State -->
+      <div id="no-passes-state" class="empty-state hidden">
+        <div class="empty-icon">
+          <i class="fa-solid fa-box-open"></i>
+        </div>
+        <h3>No Available Gamepasses Found</h3>
+        <p id="no-passes-desc">This player does not currently have any active gamepasses available for purchase or donation.</p>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="info-section">
+      <h2 class="section-title"><i class="fa-solid fa-circle-question"></i> How BloxPass Scanner Works</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-num">1</div>
+          <h3>Enter Username</h3>
+          <p>Type any Roblox username or player ID in the search bar above to fetch their profile details.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-num">2</div>
+          <h3>Scan Gamepasses</h3>
+          <p>Our server scans all public games created by that user and aggregates every published gamepass with live pricing.</p>
+        </div>
+        <div class="info-card">
+          <div class="info-num">3</div>
+          <h3>Click to Donate</h3>
+          <p>Clicking any gamepass card immediately opens the official Roblox store page where you can purchase or donate!</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>© 2026 BloxPass Scanner. Not affiliated with or endorsed by Roblox Corporation.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
